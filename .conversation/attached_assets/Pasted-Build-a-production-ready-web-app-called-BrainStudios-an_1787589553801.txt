@@ -1,0 +1,576 @@
+Build a production-ready web app called BrainStudios — an autonomous AI movie production studio for directors, filmmakers, and creative teams.
+
+Use the existing project setup and package.json as the source of truth for the application stack and dependencies. Do not replace the stack unless necessary.
+
+Core Product Vision
+
+BrainStudios should let a director start with a rough creative input such as:
+
+* a short movie idea
+* a treatment
+* a screenplay draft
+* a PDF
+* pasted notes
+* a voice-note transcript
+
+The system should then orchestrate multiple specialized AI agents to turn that rough input into a structured movie production workspace.
+
+This is not a generic chatbot or simple AI content generator. The main experience should feel like a real digital film studio where multiple AI production agents collaborate, produce assets, and update the project as the director gives feedback.
+
+Primary Workflow
+
+A user should be able to:
+
+1. Create a new movie production.
+2. Enter or upload their rough idea.
+3. Choose basic production preferences such as genre, tone, target duration, visual style, and audience.
+4. Click Start Production.
+5. Watch multiple AI agents begin working on the production.
+6. Open generated production areas such as story, characters, concept art, storyboard, shots, budget, schedule, and preview.
+7. Give high-level director feedback such as:
+    * “Make the ending darker.”
+    * “Make Maya more mysterious.”
+    * “Turn this into a 15-minute short film.”
+    * “Make Scene 4 happen at night.”
+8. Relevant agents should update dependent production assets.
+
+AI Agent Architecture
+
+Design the system around specialized agents.
+
+Director Agent
+
+Acts as the central orchestrator.
+
+Responsibilities:
+
+* understand the director’s original intent
+* break the project into tasks
+* decide which agents should run
+* pass context between agents
+* track dependencies
+* respond to director-level revision requests
+* trigger updates to dependent assets
+
+Story Agent
+
+Produces:
+
+* logline
+* synopsis
+* story structure
+* acts
+* scenes
+* screenplay draft
+* dialogue suggestions
+* scene descriptions
+
+Character Agent
+
+Produces:
+
+* character profiles
+* appearance
+* personality
+* motivations
+* relationships
+* backstory
+* emotional arcs
+* reusable visual descriptions for consistency
+
+World Building Agent
+
+Produces:
+
+* locations
+* environments
+* time period
+* world rules
+* production design notes
+* atmosphere and visual language
+
+Concept Art Agent
+
+Produces prompts and generated visual assets for:
+
+* characters
+* locations
+* costumes
+* props
+* key scenes
+
+Maintain visual consistency across generated assets.
+
+Storyboard Agent
+
+Converts scenes into storyboard sequences.
+
+Each storyboard frame should include:
+
+* scene
+* shot number
+* visual description
+* framing
+* camera angle
+* character placement
+* action
+* dialogue or voice-over
+* generated storyboard image when available
+
+Cinematography Agent
+
+Produces:
+
+* shot list
+* shot type
+* camera movement
+* lens suggestion
+* lighting
+* framing
+* transition
+* estimated duration
+
+Video / Preview Agent
+
+Create short scene previews or cinematic animatics from selected scenes.
+
+Use Google Cloud and Google AI video-generation services where available. If direct generation is unavailable during development, create a clean abstraction and realistic fallback states so the integration can be added later without redesigning the product.
+
+Sound Agent
+
+Produces:
+
+* soundtrack direction
+* ambient sound
+* sound effects
+* music cues
+* emotional audio notes per scene
+
+Production Agent
+
+Produces:
+
+* estimated production budget
+* shooting days
+* locations required
+* cast requirements
+* crew requirements
+* equipment requirements
+* scene complexity
+* production risks
+
+Scheduling Agent
+
+Produces a shooting schedule based on:
+
+* scene
+* location
+* cast
+* day/night
+* estimated shoot duration
+* dependencies
+
+Marketing Agent
+
+Produces:
+
+* movie title alternatives
+* tagline
+* poster concepts
+* teaser copy
+* trailer structure
+* social content
+* synopsis
+* press-kit copy
+
+Agent Orchestration UI
+
+A major part of the experience should visibly show agents working.
+
+Create a live Production Activity panel with cards such as:
+
+Story Agent
+Writing screenplay…
+
+Character Agent
+Building character profiles…
+
+Storyboard Agent
+Waiting for screenplay…
+
+Budget Agent
+Estimating production requirements…
+
+Each task should have states:
+
+* queued
+* waiting
+* running
+* completed
+* failed
+* needs review
+
+Show dependencies between tasks where useful.
+
+The agent activity should feel dynamic and visually impressive for a hackathon demo.
+
+Director Chat
+
+Add a persistent Director Chat interface.
+
+The director should be able to give high-level instructions such as:
+
+“Make the final act more emotional.”
+
+The Director Agent should determine which existing production assets are affected.
+
+For example:
+
+Story Agent → rewrite Act 3
+Character Agent → update emotional arcs
+Storyboard Agent → regenerate affected frames
+Cinematography Agent → update final shots
+Sound Agent → change music direction
+Preview Agent → mark preview as outdated
+
+Before applying a large cascading update, show the director what will change and allow them to confirm.
+
+Main Navigation
+
+Use a premium studio-style dashboard.
+
+Main navigation:
+
+* Productions
+* Overview
+* Story
+* Characters
+* World
+* Concept Art
+* Storyboard
+* Shots
+* Preview
+* Sound
+* Production
+* Schedule
+* Marketing
+* Activity
+* Settings
+
+Production Dashboard
+
+Each movie project should have an Overview page displaying:
+
+* movie title
+* genre
+* status
+* runtime target
+* production progress
+* key visual
+* latest AI activity
+* screenplay completion
+* characters generated
+* scenes generated
+* storyboard progress
+* estimated budget
+* production timeline
+
+Include a clear Continue Production action.
+
+Story Experience
+
+Do not display the screenplay as one huge text field.
+
+Build a structured screenplay viewer organized by:
+
+Act → Scene → Scene content
+
+Each scene should support:
+
+* scene heading
+* location
+* time
+* description
+* dialogue
+* characters
+* generated assets
+* revision history
+
+Allow the director to regenerate individual scenes instead of the entire screenplay.
+
+Character Experience
+
+Display characters as a visual cast board.
+
+Each character should have:
+
+* portrait
+* name
+* role
+* personality
+* motivations
+* appearance
+* relationships
+* story arc
+* visual reference prompt
+
+Allow locking a character’s appearance so future image generation preserves consistency.
+
+Storyboard Experience
+
+Create a cinematic storyboard board.
+
+Each storyboard card should show:
+
+* image
+* shot number
+* scene
+* description
+* camera movement
+* dialogue
+* duration
+
+Support:
+
+* grid view
+* sequence view
+* regenerate shot
+* edit prompt
+* approve shot
+* lock shot
+
+Production Planning
+
+Create a real production section rather than only creative generation.
+
+Budget
+
+Break down estimated:
+
+* cast
+* crew
+* locations
+* equipment
+* wardrobe
+* props
+* visual effects
+* post-production
+* contingency
+
+Shooting Schedule
+
+Generate a practical table with:
+
+* production day
+* scene
+* location
+* cast
+* time of day
+* duration
+* notes
+
+Production Requirements
+
+Show:
+
+* required actors
+* extras
+* locations
+* props
+* costumes
+* equipment
+* special effects
+
+Revision System
+
+Every generated asset should support:
+
+* regenerate
+* edit manually
+* approve
+* lock
+* version history
+
+Locked assets should not be modified automatically unless the director explicitly unlocks them.
+
+Dependencies should be tracked.
+
+For example:
+
+Scene 5 → Storyboard 5A, 5B, 5C → Shot Plan → Preview
+
+If Scene 5 changes, mark dependent outputs as Outdated instead of silently overwriting them.
+
+Google Cloud and Gemini Integration
+
+This project is intended for Google’s Agentic Cinema hackathon, so the AI and orchestration layer should meaningfully use Google technologies.
+
+Use appropriate Google services such as:
+
+* Gemini for reasoning, story generation, structured outputs, multimodal understanding, and tool calling
+* Gemini Enterprise Agent Platform / Agent Builder for agent orchestration where available
+* Vertex AI for hosted generative AI capabilities and model access
+* Imagen for concept art, character imagery, locations, posters, and storyboard assets where appropriate
+* Veo for generated scene previews, animatics, or cinematic clips where available
+* Cloud Storage for uploaded scripts, documents, generated images, videos, and other production assets
+* Cloud Run or appropriate Google Cloud execution services for backend agent tasks where useful
+* Google Cloud IAM and secure service authentication for production integrations
+
+Use structured JSON outputs between agents wherever possible so workflows are deterministic and easy to validate.
+
+The app must show actual runtime use of Google Cloud and Gemini rather than simply mentioning them in documentation.
+
+Replit Partner Integration
+
+This project will be submitted under the Replit partner track.
+
+The application must demonstrate meaningful runtime usage of Replit technology, not merely mention Replit in the README.
+
+Build, run, and host the application through Replit, and make the Replit integration obvious enough that judges can verify it from the running project and public repository.
+
+Data Model
+
+Create persistent models for the core entities needed by the product, including:
+
+User
+
+Production
+
+Include fields such as:
+
+* id
+* userId
+* title
+* originalIdea
+* genre
+* tone
+* visualStyle
+* targetRuntime
+* status
+* createdAt
+* updatedAt
+
+AgentRun
+
+* id
+* productionId
+* agentType
+* status
+* input
+* output
+* startedAt
+* completedAt
+* error
+
+StoryAct
+
+Scene
+
+Character
+
+Location
+
+ConceptAsset
+
+StoryboardFrame
+
+Shot
+
+ProductionBudget
+
+ProductionSchedule
+
+GeneratedAsset
+
+Revision
+
+Track:
+
+* entity type
+* entity id
+* previous version
+* new version
+* instruction
+* createdAt
+
+Dependency
+
+Track relationships between generated assets.
+
+Initial MVP Scope
+
+For the first working version, prioritize:
+
+1. Authentication.
+2. Productions dashboard.
+3. New Production flow.
+4. Rough story input.
+5. Gemini-powered Story Agent.
+6. Character Agent.
+7. Storyboard Agent.
+8. Concept image generation.
+9. Production Activity / agent status.
+10. Director Chat.
+11. Basic dependency system.
+12. Budget Agent.
+13. Production schedule generation.
+14. Beautiful project dashboard.
+
+Do not attempt every advanced feature before the core experience works.
+
+Demo Scenario
+
+Seed the app with an optional example production:
+
+“A retired detective discovers that every dream he has ever had is actually surveillance footage from the future.”
+
+The demo should clearly show:
+
+1. Director starts the production.
+2. Story Agent creates the story.
+3. Character Agent creates characters.
+4. Storyboard Agent turns scenes into visual shots.
+5. Production Agent calculates requirements.
+6. Director says, “Make the ending darker.”
+7. The system identifies affected assets.
+8. Relevant agents update them.
+9. The director sees the updated production.
+
+Design Direction
+
+The app should feel like premium professional film-production software.
+
+Avoid:
+
+* generic SaaS dashboard design
+* excessive gradients
+* cartoonish AI visuals
+* oversized rounded cards everywhere
+* chatbot-first layouts
+
+Use:
+
+* cinematic spacing
+* dark studio interface
+* strong typography
+* rich image previews
+* large storyboard imagery
+* subtle motion
+* professional production terminology
+* clear status indicators
+
+The interface should feel closer to professional editing and production software than a typical AI website.
+
+Desktop should be the primary experience, while remaining usable on tablets and mobile.
+
+Important Product Principle
+
+The director remains in control.
+
+AI should act as the production crew.
+
+The user is not asking a chatbot to make a movie. The user is directing an autonomous digital studio.
+
+Build the application around that principle.
+
+Start by implementing the complete MVP workflow with real functional flows rather than static mock screens. Use the existing package.json and project setup, integrate Gemini and Google Cloud services where required, and use realistic seeded or fallback data only where an external generation capability cannot yet be configured.

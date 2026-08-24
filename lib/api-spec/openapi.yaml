@@ -3,20 +3,23 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: BrainStudios production studio API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: productions
+    description: Movie production workspaces
+  - name: production-assets
+    description: Generated production assets and planning outputs
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +27,636 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /productions:
+    get:
+      operationId: listProductions
+      tags: [productions]
+      summary: List productions
+      responses:
+        "200":
+          description: Productions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Production"
+    post:
+      operationId: createProduction
+      tags: [productions]
+      summary: Create a production
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductionInput"
+      responses:
+        "201":
+          description: Created production
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Production"
+  /productions/{id}:
+    get:
+      operationId: getProduction
+      tags: [productions]
+      summary: Get a production
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "200":
+          description: Production
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Production"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateProduction
+      tags: [productions]
+      summary: Update production preferences
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductionUpdate"
+      responses:
+        "200":
+          description: Updated production
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Production"
+  /productions/{id}/start:
+    post:
+      operationId: startProduction
+      tags: [productions]
+      summary: Start AI production orchestration
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "202":
+          description: Production started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Production"
+  /productions/{id}/overview:
+    get:
+      operationId: getProductionOverview
+      tags: [productions]
+      summary: Get production overview metrics
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "200":
+          description: Production overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionOverview"
+  /productions/{id}/activity:
+    get:
+      operationId: listProductionActivity
+      tags: [productions]
+      summary: List recent agent activity
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: number
+            minimum: 1
+            maximum: 100
+            default: 20
+      responses:
+        "200":
+          description: Activity events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityEvent"
+  /productions/{id}/chat:
+    post:
+      operationId: sendDirectorMessage
+      tags: [productions]
+      summary: Send high-level director feedback
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DirectorMessageInput"
+      responses:
+        "200":
+          description: Director response and proposed cascade
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DirectorMessage"
+  /productions/{id}/story:
+    get:
+      operationId: getProductionStory
+      tags: [production-assets]
+      summary: Get structured story
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "200":
+          description: Story
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Story"
+  /productions/{id}/scenes/{sceneId}:
+    patch:
+      operationId: updateScene
+      tags: [production-assets]
+      summary: Update a scene
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+        - $ref: "#/components/parameters/SceneId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SceneUpdate"
+      responses:
+        "200":
+          description: Updated scene
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Scene"
+  /productions/{id}/scenes/{sceneId}/regenerate:
+    post:
+      operationId: regenerateScene
+      tags: [production-assets]
+      summary: Regenerate one scene
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+        - $ref: "#/components/parameters/SceneId"
+      responses:
+        "202":
+          description: Regenerated scene
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Scene"
+  /productions/{id}/characters:
+    get:
+      operationId: listCharacters
+      tags: [production-assets]
+      summary: List cast characters
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "200":
+          description: Characters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Character"
+  /productions/{id}/characters/{characterId}:
+    patch:
+      operationId: updateCharacter
+      tags: [production-assets]
+      summary: Update a character
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+        - $ref: "#/components/parameters/CharacterId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CharacterUpdate"
+      responses:
+        "200":
+          description: Updated character
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Character"
+  /productions/{id}/characters/{characterId}/lock:
+    post:
+      operationId: toggleCharacterLock
+      tags: [production-assets]
+      summary: Lock or unlock a character appearance
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+        - $ref: "#/components/parameters/CharacterId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LockInput"
+      responses:
+        "200":
+          description: Updated character
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Character"
+  /productions/{id}/storyboard:
+    get:
+      operationId: listStoryboardFrames
+      tags: [production-assets]
+      summary: List storyboard frames
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "200":
+          description: Storyboard frames
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StoryboardFrame"
+  /productions/{id}/storyboard/{frameId}/regenerate:
+    post:
+      operationId: regenerateStoryboardFrame
+      tags: [production-assets]
+      summary: Regenerate one storyboard frame
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+        - $ref: "#/components/parameters/FrameId"
+      responses:
+        "202":
+          description: Updated frame
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryboardFrame"
+  /productions/{id}/storyboard/{frameId}/approve:
+    post:
+      operationId: approveStoryboardFrame
+      tags: [production-assets]
+      summary: Approve one storyboard frame
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+        - $ref: "#/components/parameters/FrameId"
+      responses:
+        "200":
+          description: Approved frame
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryboardFrame"
+  /productions/{id}/storyboard/{frameId}/lock:
+    post:
+      operationId: toggleStoryboardLock
+      tags: [production-assets]
+      summary: Lock or unlock one storyboard frame
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+        - $ref: "#/components/parameters/FrameId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LockInput"
+      responses:
+        "200":
+          description: Updated frame
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StoryboardFrame"
+  /productions/{id}/budget:
+    get:
+      operationId: getProductionBudget
+      tags: [production-assets]
+      summary: Get estimated production budget
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "200":
+          description: Budget
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionBudget"
+  /productions/{id}/schedule:
+    get:
+      operationId: getProductionSchedule
+      tags: [production-assets]
+      summary: Get shooting schedule
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "200":
+          description: Schedule
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScheduleDay"
+  /productions/{id}/requirements:
+    get:
+      operationId: getProductionRequirements
+      tags: [production-assets]
+      summary: Get production requirements
+      parameters:
+        - $ref: "#/components/parameters/ProductionId"
+      responses:
+        "200":
+          description: Requirements
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProductionRequirements"
 components:
+  parameters:
+    ProductionId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: number
+        minimum: 1
+    SceneId:
+      name: sceneId
+      in: path
+      required: true
+      schema:
+        type: number
+        minimum: 1
+    CharacterId:
+      name: characterId
+      in: path
+      required: true
+      schema:
+        type: number
+        minimum: 1
+    FrameId:
+      name: frameId
+      in: path
+      required: true
+      schema:
+        type: number
+        minimum: 1
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
     HealthStatus:
       type: object
       properties:
         status:
           type: string
-      required:
-        - status
-
+      required: [status]
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required: [error]
+    Production:
+      type: object
+      properties:
+        id: { type: number }
+        title: { type: string }
+        originalIdea: { type: string }
+        genre: { type: string }
+        tone: { type: string }
+        visualStyle: { type: string }
+        targetRuntime: { type: number }
+        audience: { type: string }
+        status: { type: string }
+        progress: { type: number }
+        keyVisual: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+      required: [id, title, originalIdea, genre, tone, visualStyle, targetRuntime, audience, status, progress, keyVisual, createdAt, updatedAt]
+    ProductionInput:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        originalIdea: { type: string, minLength: 1 }
+        genre: { type: string }
+        tone: { type: string }
+        visualStyle: { type: string }
+        targetRuntime: { type: number, minimum: 1 }
+        audience: { type: string }
+      required: [title, originalIdea, genre, tone, visualStyle, targetRuntime, audience]
+    ProductionUpdate:
+      type: object
+      properties:
+        title: { type: string, minLength: 1 }
+        genre: { type: string }
+        tone: { type: string }
+        visualStyle: { type: string }
+        targetRuntime: { type: number, minimum: 1 }
+        audience: { type: string }
+        status: { type: string }
+    ProductionOverview:
+      type: object
+      properties:
+        production: { $ref: "#/components/schemas/Production" }
+        screenplayCompletion: { type: number }
+        charactersGenerated: { type: number }
+        scenesGenerated: { type: number }
+        storyboardProgress: { type: number }
+        estimatedBudget: { type: number }
+        shootingDays: { type: number }
+        latestActivity: { type: ["string", "null"] }
+      required: [production, screenplayCompletion, charactersGenerated, scenesGenerated, storyboardProgress, estimatedBudget, shootingDays, latestActivity]
+    ActivityEvent:
+      type: object
+      properties:
+        id: { type: number }
+        productionId: { type: number }
+        agentType: { type: string }
+        label: { type: string }
+        detail: { type: string }
+        status: { type: string }
+        progress: { type: number }
+        dependency: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+      required: [id, productionId, agentType, label, detail, status, progress, dependency, createdAt]
+    DirectorMessageInput:
+      type: object
+      properties:
+        message: { type: string, minLength: 1 }
+        confirmed: { type: boolean }
+      required: [message]
+    DirectorMessage:
+      type: object
+      properties:
+        id: { type: number }
+        message: { type: string }
+        response: { type: string }
+        requiresConfirmation: { type: boolean }
+        affectedAssets:
+          type: array
+          items: { type: string }
+        createdAt: { type: string, format: date-time }
+      required: [id, message, response, requiresConfirmation, affectedAssets, createdAt]
+    Story:
+      type: object
+      properties:
+        logline: { type: string }
+        synopsis: { type: string }
+        acts:
+          type: array
+          items: { $ref: "#/components/schemas/StoryAct" }
+        scenes:
+          type: array
+          items: { $ref: "#/components/schemas/Scene" }
+      required: [logline, synopsis, acts, scenes]
+    StoryAct:
+      type: object
+      properties:
+        id: { type: number }
+        title: { type: string }
+        summary: { type: string }
+        sceneCount: { type: number }
+      required: [id, title, summary, sceneCount]
+    Scene:
+      type: object
+      properties:
+        id: { type: number }
+        actId: { type: number }
+        sceneNumber: { type: number }
+        heading: { type: string }
+        location: { type: string }
+        time: { type: string }
+        description: { type: string }
+        dialogue: { type: string }
+        characters:
+          type: array
+          items: { type: string }
+        status: { type: string }
+        revision: { type: number }
+      required: [id, actId, sceneNumber, heading, location, time, description, dialogue, characters, status, revision]
+    SceneUpdate:
+      type: object
+      properties:
+        heading: { type: string }
+        location: { type: string }
+        time: { type: string }
+        description: { type: string }
+        dialogue: { type: string }
+      required: []
+    Character:
+      type: object
+      properties:
+        id: { type: number }
+        name: { type: string }
+        role: { type: string }
+        personality: { type: string }
+        motivations: { type: string }
+        appearance: { type: string }
+        relationships: { type: string }
+        storyArc: { type: string }
+        visualPrompt: { type: string }
+        portraitUrl: { type: ["string", "null"] }
+        appearanceLocked: { type: boolean }
+      required: [id, name, role, personality, motivations, appearance, relationships, storyArc, visualPrompt, portraitUrl, appearanceLocked]
+    CharacterUpdate:
+      type: object
+      properties:
+        personality: { type: string }
+        motivations: { type: string }
+        appearance: { type: string }
+        relationships: { type: string }
+        storyArc: { type: string }
+        visualPrompt: { type: string }
+      required: []
+    LockInput:
+      type: object
+      properties:
+        locked: { type: boolean }
+      required: [locked]
+    StoryboardFrame:
+      type: object
+      properties:
+        id: { type: number }
+        sceneId: { type: number }
+        shotNumber: { type: string }
+        description: { type: string }
+        framing: { type: string }
+        cameraMovement: { type: string }
+        dialogue: { type: string }
+        duration: { type: number }
+        imageUrl: { type: ["string", "null"] }
+        status: { type: string }
+        locked: { type: boolean }
+      required: [id, sceneId, shotNumber, description, framing, cameraMovement, dialogue, duration, imageUrl, status, locked]
+    ProductionBudget:
+      type: object
+      properties:
+        total: { type: number }
+        currency: { type: string }
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/BudgetLine"
+      required: [total, currency, categories]
+    BudgetLine:
+      type: object
+      properties:
+        category: { type: string }
+        amount: { type: number }
+        percentage: { type: number }
+      required: [category, amount, percentage]
+    ScheduleDay:
+      type: object
+      properties:
+        day: { type: number }
+        date: { type: string }
+        scene: { type: string }
+        location: { type: string }
+        cast: { type: string }
+        timeOfDay: { type: string }
+        duration: { type: string }
+        notes: { type: string }
+      required: [day, date, scene, location, cast, timeOfDay, duration, notes]
+    ProductionRequirements:
+      type: object
+      properties:
+        actors:
+          type: array
+          items: { type: string }
+        extras:
+          type: array
+          items: { type: string }
+        locations:
+          type: array
+          items: { type: string }
+        props:
+          type: array
+          items: { type: string }
+        costumes:
+          type: array
+          items: { type: string }
+        equipment:
+          type: array
+          items: { type: string }
+        specialEffects:
+          type: array
+          items: { type: string }
+      required: [actors, extras, locations, props, costumes, equipment, specialEffects]

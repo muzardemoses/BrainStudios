@@ -1,15 +1,16 @@
-# [Project name]
+# BrainStudios
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+BrainStudios is an autonomous AI movie-production workspace that takes directors from a creative brief to screenplay, cast bible, storyboard, budget, shooting schedule, and managed revisions.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
+- Provisioned integrations: Replit-managed Clerk and Gemini AI Integrations
 
 ## Stack
 
@@ -18,27 +19,40 @@ _Replace the heading above with the project's name, and this line with one sente
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
 - API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Build: esbuild (ESM bundle)
+- Web: React 19, Vite, Tailwind CSS, TanStack Query, Clerk
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/brainstudios/` — cinematic director workspace web artifact.
+- `artifacts/api-server/` — Express API and Gemini-backed director-agent runtime.
+- `lib/api-spec/openapi.yaml` — source-of-truth API contract; regenerate clients after changes.
+- `lib/db/src/schema/studio.ts` — production, agent, screenplay, cast, storyboard, budget, schedule, asset, revision, and dependency models.
+- `lib/integrations-gemini-ai/` — shared Gemini client through Replit AI Integrations.
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- API is contract-first: frontend hooks and backend validators are generated from the OpenAPI document.
+- Production data is modeled as connected, persistent assets rather than a one-shot AI response; unlocked downstream material can be marked outdated after a confirmed director revision.
+- Gemini calls use Replit's managed AI Integrations proxy, not a user-supplied API key.
+- Clerk uses the Replit-managed tenant for sign-in and sign-up.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Create a production from an original idea and follow its live studio activity.
+- Review and revise screenplay scenes, character profiles, storyboard frames, production logistics, and requirements.
+- Send director notes to the Gemini-powered Director Agent; it identifies the downstream production cascade and requires confirmation before marking assets for revision.
+- A seeded demo, “The Lucid Witness,” is available on first launch.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+No additional user preferences recorded.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- After editing the API contract, run code generation before typechecking the app.
+- After editing Drizzle tables, run the development database push before starting API tests.
+- The generated API Zod barrel may reintroduce a duplicate `ListProductionActivityParams` export after code generation; keep the generated-types barrel export removed.
 
 ## Pointers
 

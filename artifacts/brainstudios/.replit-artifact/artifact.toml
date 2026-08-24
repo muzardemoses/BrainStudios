@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "BrainStudios"
+description = "An autonomous AI movie production studio for directors and creative teams, turning rough ideas into structured stories, characters, storyboards, and production plans."
+version = "1.0.0"
+id = "artifacts/brainstudios"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21198
+
+[services.development]
+run = "pnpm --filter @workspace/brainstudios run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/brainstudios", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/brainstudios/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21198"
+BASE_PATH = "/"
