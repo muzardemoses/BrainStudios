@@ -66,7 +66,17 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    proxy: { "/api": { target: process.env.API_ORIGIN || "http://127.0.0.1:5001", changeOrigin: false } },
+    // Replit routes /api through the workspace proxy. Keep the Vite proxy only
+    // for local development where the frontend and API use separate ports.
+    proxy:
+      process.env.REPL_ID === undefined
+        ? {
+            "/api": {
+              target: process.env.API_ORIGIN || "http://127.0.0.1:5001",
+              changeOrigin: false,
+            },
+          }
+        : undefined,
     port,
     strictPort: true,
     host: "0.0.0.0",
