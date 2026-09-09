@@ -999,46 +999,66 @@ export default function Studio() {
             <form className="composer-area" onSubmit={submit}>
               {newProject && (
                 <div className="creation-settings">
-                  <label>
-                    Length
-                    <select
-                      aria-label="Video duration"
-                      value={duration}
-                      onChange={(e) => setDuration(Number(e.target.value))}
-                    >
-                      <option value={8}>8 sec · quick video</option>
-                      <option value={30}>30 sec</option>
-                      <option value={60}>60 sec</option>
-                      <option value={90}>90 sec</option>
-                      <option value={120}>120 sec</option>
-                    </select>
-                  </label>
-                  <label>
-                    Format
-                    <select
-                      aria-label="Video format"
-                      value={format}
-                      onChange={(e) =>
-                        setFormat(e.target.value as Project["format"])
-                      }
-                    >
-                      <option>16:9</option>
-                      <option>9:16</option>
-                    </select>
-                  </label>
-                  <label>
-                    Style
-                    <select
-                      aria-label="Visual style"
-                      value={style}
-                      onChange={(e) => setStyle(e.target.value)}
-                    >
-                      <option>Cinematic</option>
-                      <option>Documentary</option>
-                      <option>Playful</option>
-                      <option>Minimal</option>
-                    </select>
-                  </label>
+                  <fieldset className="creation-setting">
+                    <legend>Length</legend>
+                    <div className="selector-options selector-length">
+                      {[
+                        [8, "8s"],
+                        [30, "30s"],
+                        [60, "60s"],
+                        [90, "90s"],
+                        [120, "2m"],
+                      ].map(([value, label]) => (
+                        <button
+                          key={value}
+                          type="button"
+                          aria-pressed={duration === value}
+                          className={duration === value ? "selected" : ""}
+                          onClick={() => setDuration(Number(value))}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+                  <fieldset className="creation-setting">
+                    <legend>Format</legend>
+                    <div className="selector-options selector-format">
+                      {(["16:9", "9:16"] as const).map((value) => (
+                        <button
+                          key={value}
+                          type="button"
+                          aria-pressed={format === value}
+                          className={format === value ? "selected" : ""}
+                          onClick={() => setFormat(value)}
+                        >
+                          <span
+                            className={`format-icon ${value === "9:16" ? "portrait" : ""}`}
+                            aria-hidden="true"
+                          />
+                          {value}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+                  <fieldset className="creation-setting">
+                    <legend>Style</legend>
+                    <div className="selector-options selector-style">
+                      {["Cinematic", "Documentary", "Playful", "Minimal"].map(
+                        (value) => (
+                          <button
+                            key={value}
+                            type="button"
+                            aria-pressed={style === value}
+                            className={style === value ? "selected" : ""}
+                            onClick={() => setStyle(value)}
+                          >
+                            {value}
+                          </button>
+                        ),
+                      )}
+                    </div>
+                  </fieldset>
                 </div>
               )}
               <div className="composer">
