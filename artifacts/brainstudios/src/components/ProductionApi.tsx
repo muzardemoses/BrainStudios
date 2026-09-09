@@ -23,16 +23,13 @@ const Context = createContext<Api>({
   },
 });
 function AuthenticatedBridge({ children }: { children: ReactNode }) {
-  const { userId, isLoaded, getToken } = useAuth();
+  const { userId, isLoaded } = useAuth();
   const request = useCallback(
     async <T,>(path: string, init?: RequestInit): Promise<T> => {
-      const token = await getToken();
-      if (!token) throw new Error("Sign in to access your productions.");
       const r = await fetch(`/api${path}`, {
         ...init,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
           ...init?.headers,
         },
       });
@@ -42,7 +39,7 @@ function AuthenticatedBridge({ children }: { children: ReactNode }) {
       if (!r.ok) throw new Error(data.error || "The request could not finish.");
       return data;
     },
-    [getToken],
+    [],
   );
   return (
     <Context.Provider

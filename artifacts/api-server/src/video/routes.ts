@@ -6,7 +6,7 @@ import {
   type Response,
   type NextFunction,
 } from "express";
-import { clerkMiddleware, getAuth } from "@clerk/express";
+import { getAuth } from "@clerk/express";
 import { pool } from "@workspace/db";
 import {
   createVideoSchema,
@@ -33,17 +33,6 @@ const router: IRouter = Router();
 router.get("/video/config", (_req, res) => {
   res.json(readiness());
 });
-router.use(
-  "/videos",
-  clerkMiddleware({
-    publishableKey: process.env.VITE_CLERK_PUBLISHABLE_KEY,
-    authorizedParties: (
-      process.env.APP_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173"
-    )
-      .split(",")
-      .map((s) => s.trim()),
-  }),
-);
 router.use("/videos", (req, res, next) => {
   res.setHeader("Cache-Control", "private, no-store");
   if (!getAuth(req).userId) {
