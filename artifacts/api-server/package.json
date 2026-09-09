@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "export NODE_ENV=development && pnpm run build && pnpm run start",
     "build": "node ./build.mjs",
-    "start": "node --env-file-if-exists=../../.env --enable-source-maps ./dist/index.mjs",
+    "start": "node --env-file-if-exists=../../.env --enable-source-maps ./dist/bootstrap.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "db:migrate": "node --env-file-if-exists=../../.env scripts/migrate.mjs",
+    "check:google-auth": "node --env-file-if-exists=../../.env --import tsx scripts/check-google-auth.ts",
     "check:workflow": "node --env-file-if-exists=../../.env --import tsx scripts/check-workflow.ts",
     "check:live": "node --env-file-if-exists=../../.env --import tsx scripts/live-check.ts --generate"
   },
