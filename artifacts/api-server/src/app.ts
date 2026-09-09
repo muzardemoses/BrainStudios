@@ -25,8 +25,15 @@ app.use(
     },
   }),
 );
-app.use(cors());
-app.use(express.json());
+app.use(
+  cors({
+    origin: (
+      process.env.APP_ORIGINS || "http://localhost:5173,http://127.0.0.1:5173"
+    ).split(","),
+    credentials: true,
+  }),
+);
+app.use(express.json({ limit: "256kb" }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);

@@ -47,3 +47,12 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# Local browser verification artifacts
+.playwright-cli/
+output/playwright/
+
+# Local credentials
+.env
+.env.*
+!.env.example
